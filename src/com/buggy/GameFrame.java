@@ -11,20 +11,20 @@ public class GameFrame extends JFrame {
         this.add(titlePanel);
 
         /* Player Section */
-        JLayeredPane playerSection = new PlayerSection();
+        PlayerSection playerSection = new PlayerSection();
         this.add(playerSection);
 
         /* Location Section */
-        JLayeredPane locationSection = new LocationSection();
+        LocationSection locationSection = new LocationSection();
         this.add(locationSection);
 
-        /* Map Section */
-        MapSection mapSection = new MapSection();
-        this.add(mapSection);
-
         /* Location Description Section */
-        JPanel locationDescriptionSection = new LocationDescriptionSection();
+        LocationDescriptionSection locationDescriptionSection = new LocationDescriptionSection();
         this.add(locationDescriptionSection);
+
+        /* Map Section */
+        MapSection mapSection = new MapSection(locationDescriptionSection);
+        this.add(mapSection);
 
         /* Game Frame Specific Settings */
         this.setTitle("Search For A Killer");

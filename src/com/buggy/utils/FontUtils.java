@@ -6,6 +6,7 @@ import java.io.IOException;
 
 public class FontUtils {
     public static Font DEFAULT_FONT = new Font("Arial", Font.PLAIN, 12);
+
     public static Font registerCustomTitleFont() {
         try {
             Font customTitleFont =
