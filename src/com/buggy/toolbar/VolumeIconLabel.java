@@ -22,7 +22,6 @@ public class VolumeIconLabel extends TitleIconLabel {
         volumeDialog = new JDialog(parent, "Volume Control", false);
         volumeDialog.setSize(200, 60);
         volumeDialog.setAlwaysOnTop(true);
-        volumeDialog.setLocationRelativeTo(parent);
         volumeDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         volumeDialog.setUndecorated(true);
 
@@ -77,17 +76,9 @@ public class VolumeIconLabel extends TitleIconLabel {
             createVolumeDialogue();
         }
 
-        // Position volume dialog below volume icon
-        int x = this.getX();
-        int y = this.getY();
-        int width = this.getWidth();
-        int height = this.getHeight();
-
-        int centerX = x + width / 2;
-        int centerY = y + height / 2;
-
-        volumeDialog.setLocation(centerX - 100, centerY + height + 10);
-
+        volumeDialog.setLocationRelativeTo(this);
+        int yOffset = 60; // Offset to put it right below the volume icon
+        volumeDialog.setLocation(volumeDialog.getX(), volumeDialog.getY() + yOffset);
         volumeDialog.setVisible(true);
     }
 

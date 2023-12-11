@@ -1,10 +1,15 @@
 package com.buggy.toolbar;
 
+import com.buggy.utils.FontUtils;
+
+import static com.buggy.utils.ColorUtils.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+
 import java.awt.event.MouseListener;
 
 public class HelpIconLabel extends TitleIconLabel {
@@ -52,6 +57,9 @@ public class HelpIconLabel extends TitleIconLabel {
         int padding = 10;
         helpTextArea.setBorder(BorderFactory.createEmptyBorder(padding, padding, padding, padding));
         helpTextArea.setEditable(false);
+        helpTextArea.setBackground(HELP_BACKGROUND.color());
+        helpTextArea.setForeground(HELP_TEXT.color());
+        helpTextArea.setFont(FontUtils.DEFAULT_FONT.deriveFont(16f));
         return helpTextArea;
     }
 

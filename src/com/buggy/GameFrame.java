@@ -24,7 +24,7 @@ public class GameFrame extends JFrame {
         this.add(locationDescriptionSection);
 
         /* Map Section */
-        MapSection mapSection = new MapSection(locationDescriptionSection);
+        MapSection mapSection = new MapSection(locationDescriptionSection, playerSection);
         this.add(mapSection);
 
         /* Game Frame Specific Settings */
@@ -34,6 +34,7 @@ public class GameFrame extends JFrame {
         this.setSize(1000, 625);
         this.setResizable(false);
         this.setVisible(true);
+        this.setLocationRelativeTo(null);
         this.getContentPane().setBackground(GAME_BACKGROUND.color());
     }
 }

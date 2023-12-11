@@ -5,6 +5,7 @@ import com.buggy.utils.FontUtils;
 import com.buggy.utils.ImageUtils;
 
 import static com.buggy.utils.ColorUtils.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -18,6 +19,8 @@ public class PlayerSection extends JLayeredPane {
     private List<Item> evidenceBag;
     private JPanel evidenceSection;
     private LocationSection locationSection;
+    private JLabel scoreSection;
+    private int score;
 
     public PlayerSection() {
         // Initialize evidence bag
@@ -39,7 +42,7 @@ public class PlayerSection extends JLayeredPane {
         this.add(playerTitle, LAYER_1);
 
         /* Score Section */
-        JLabel scoreSection = new JLabel("Score: 0");
+        scoreSection = new JLabel("Score: " + score);
         scoreSection.setOpaque(true);
         scoreSection.setHorizontalAlignment(SwingConstants.CENTER);
         scoreSection.setVerticalAlignment(SwingConstants.CENTER);
@@ -70,6 +73,7 @@ public class PlayerSection extends JLayeredPane {
             ImageIcon icon =
                     ImageUtils.getResizedIcon("data/icons/" + evidence.getFilename(), 50, 50);
             JLabel evidenceIcon = new JLabel(icon);
+            evidenceIcon.setToolTipText(evidence.getName());
 
             evidenceIcon.addMouseListener(new MouseAdapter() {
                 @Override
@@ -77,7 +81,8 @@ public class PlayerSection extends JLayeredPane {
                     if (e.getClickCount() == 2) {
                         locationSection.addItemToLocation(evidence);
                         removeItemFromEvidenceBag(evidence);
-                        locationSection.getDescriptionTextArea().setText(evidence.getName() + " removed to evidence bag");
+                        locationSection.getDescriptionTextArea().setText(
+                                evidence.getName() + " removed to evidence bag");
                     } else {
                         String itemDescription = evidence.getDescription();
                         locationSection.getDescriptionTextArea().setText(itemDescription);
@@ -118,5 +123,18 @@ public class PlayerSection extends JLayeredPane {
 
     public void setEvidenceBag(List<Item> evidenceBag) {
         this.evidenceBag = evidenceBag;
+    }
+
+    public void incrementScore(int value) {
+        score += value;
+        scoreSection.setText("Score: " + score);
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 }

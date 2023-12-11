@@ -33,7 +33,11 @@ public enum ColorUtils {
 
     // Location Description Section
     LOCATION_DESCRIPTION_BACKGROUND(39, 75, 89),
-    LOCATION_DESCRIPTION_TEXT(139, 187, 217);
+    LOCATION_DESCRIPTION_TEXT(139, 187, 217),
+
+    // Help Panel
+    HELP_BACKGROUND(61, 38, 2),
+    HELP_TEXT(227, 192, 141);
 
     private final Color color;
 

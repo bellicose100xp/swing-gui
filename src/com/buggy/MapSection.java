@@ -19,9 +19,11 @@ public class MapSection extends JPanel implements MouseListener {
     private static Location currentLocation;
     private final Map<JLabel, Location> locationLabels;
     private LocationDescriptionSection locationDescriptionSection;
+    private PlayerSection playerSection;
 
-    public MapSection(LocationDescriptionSection locationDescriptionSection) {
+    public MapSection(LocationDescriptionSection locationDescriptionSection, PlayerSection playerSection) {
         this.locationDescriptionSection = locationDescriptionSection;
+        this.playerSection = playerSection;
 
         /* Manually create all rooms */
         Location backyard = new Location("Backyard");
@@ -136,6 +138,9 @@ public class MapSection extends JPanel implements MouseListener {
 
         /* Update location description */
         locationDescriptionSection.setText(currentLocation.description);
+
+        /* Update score by 1 */
+        playerSection.incrementScore(1);
     }
 
     @Override

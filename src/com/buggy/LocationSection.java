@@ -2,6 +2,7 @@ package com.buggy;
 
 import static com.buggy.utils.ColorUtils.*;
 
+import com.buggy.entity.Character;
 import com.buggy.entity.Item;
 import com.buggy.utils.FontUtils;
 import com.buggy.utils.ImageUtils;
@@ -18,8 +19,10 @@ public class LocationSection extends JLayeredPane {
     private static final Integer LAYER_0 = 0;
     private static final Integer LAYER_1 = 1;
     private PlayerSection playerSection;
-    private JPanel itemsSection;
     private List<Item> items;
+    private JPanel itemsSection;
+    private List<Character> characters;
+    private JPanel getCharacterSection;
     private JPanel characterSection;
     private JTextArea descriptionTextArea;
 
@@ -38,6 +41,9 @@ public class LocationSection extends JLayeredPane {
 
         /* Items Section Icons */
         itemsSection = new JPanel();
+        itemsSection.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        itemsSection.setBounds(20, 17, 361, 64);
+        itemsSection.setBackground(ITEM_ICON_BACKGROUND.color());
 
         // Add all items to the items list
         // Ideally this should be per location, but for testing purposes,
@@ -46,27 +52,10 @@ public class LocationSection extends JLayeredPane {
 
         // Render initial icons for the items in the items section
         renderItemSection(itemsSection, items);
-
-        // Additional itemsSection settings
-        itemsSection.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        itemsSection.setBounds(20, 17, 361, 64);
-        itemsSection.setBackground(ITEM_ICON_BACKGROUND.color());
         this.add(itemsSection, LAYER_1);
 
-        /* Character Section Icons */
-        characterSection = new JPanel();
-
-        // Add item icons to the frame
-        String[] characters = {"nanny.png", "butler.png", "gardner.png", "man.png", "girl.png"};
-        for (String character : characters) {
-            ImageIcon icon = ImageUtils.getResizedIcon("data/icons/" + character.toLowerCase(), 50, 50);
-            JLabel itemIcon = new JLabel(icon);
-            characterSection.add(itemIcon);
-        }
-
-        characterSection.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 10));
-        characterSection.setBounds(20, 95, 361, 64);
-        characterSection.setBackground(ITEM_ICON_BACKGROUND.color());
+        /* Character Section */
+        characterSection = createCharacterSection();
         this.add(characterSection, LAYER_1);
 
         /* Scrollable Description / Action Text / Journal Entries Area */
@@ -76,6 +65,7 @@ public class LocationSection extends JLayeredPane {
         /* Journal Entries */
         ImageIcon journalIcon = ImageUtils.getResizedIcon("data/icons/journal.png", 140, 140);
         JLabel journalIconLabel = new JLabel(journalIcon);
+        journalIconLabel.setToolTipText("Evidence Journal");
         journalIconLabel.setBounds(381, 20, 140, 140);
         journalIconLabel.addMouseListener(new MouseAdapter() {
             @Override
@@ -87,6 +77,40 @@ public class LocationSection extends JLayeredPane {
 
         /* Location Section JLayeredPane Bounds */
         this.setBounds(30, 240, 540, 333);
+    }
+
+    private JPanel createCharacterSection() {
+        JPanel characterSection = new JPanel();
+        characterSection.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 10));
+        characterSection.setBounds(20, 95, 361, 64);
+        characterSection.setBackground(ITEM_ICON_BACKGROUND.color());
+
+        // Add character icons to the frame
+        renderCharacterSection(characterSection);
+
+        return characterSection;
+    }
+
+    private void renderCharacterSection(JPanel characterSection) {
+        for (Character character : Character.characterMap.values()) {
+            ImageIcon icon = ImageUtils.getResizedIcon("data/icons/" + character.getFilename().toLowerCase(), 50, 50);
+            JLabel characterIconLabel = new JLabel(icon);
+            characterIconLabel.setToolTipText(character.getName());
+            characterSection.add(characterIconLabel);
+
+            characterIconLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        String dialogue = character.getDialogue();
+                        descriptionTextArea.setText(dialogue);
+                    } else {
+                        String characterDescription = character.getDescription();
+                        descriptionTextArea.setText(characterDescription);
+                    }
+                }
+            });
+        }
     }
 
     private void showJournalEntries() {
@@ -102,6 +126,7 @@ public class LocationSection extends JLayeredPane {
         for (Item item : items) {
             ImageIcon icon = ImageUtils.getResizedIcon("data/icons/" + item.getFilename().toLowerCase(), 50, 50);
             JLabel label = new JLabel(icon);
+            label.setToolTipText(item.getName());
             // Mouse click listener
             // Single Click: show description
             // Double Click: add item to evidence bag and remove from location
