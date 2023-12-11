@@ -25,6 +25,8 @@ public class VolumeIconLabel extends TitleIconLabel {
         volumeDialog.setLocationRelativeTo(parent);
         volumeDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         volumeDialog.setUndecorated(true);
+
+        // Dismiss Volume Dialog when the window is deactivated (e.g. clicked outside)
         volumeDialog.addWindowListener(
                 new WindowAdapter() {
                     @Override

@@ -2,18 +2,33 @@ package com.buggy;
 
 import static com.buggy.utils.ColorUtils.*;
 
+import com.buggy.entity.Item;
 import com.buggy.utils.FontUtils;
 import com.buggy.utils.ImageUtils;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 
 public class LocationSection extends JLayeredPane {
     private static final Integer LAYER_0 = 0;
     private static final Integer LAYER_1 = 1;
+    private PlayerSection playerSection;
+    private JPanel itemsSection;
+    private List<Item> items;
+    private JPanel characterSection;
+    private JTextArea descriptionTextArea;
 
-    public LocationSection() {
+    public LocationSection(PlayerSection playerSection) {
+        /* Get a reference to player section */
+        this.playerSection = playerSection;
+
+        // Initialize items array
+        items = new ArrayList<>();
 
         /* Background */
         JPanel background = new JPanel();
@@ -22,30 +37,29 @@ public class LocationSection extends JLayeredPane {
         this.add(background, LAYER_0);
 
         /* Items Section Icons */
-        JPanel itemsSection = new JPanel();
+        itemsSection = new JPanel();
 
-        // Add item icons to the frame
-        String[] itemNames = {"pen.png", "shovel.png", "gun.png"};
-        for (String itemName : itemNames) {
-            ImageIcon icon =
-                    ImageUtils.getResizedIcon("data/icons/" + itemName.toLowerCase(), 50, 50);
-            JLabel itemIcon = new JLabel(icon);
-            itemsSection.add(itemIcon);
-        }
+        // Add all items to the items list
+        // Ideally this should be per location, but for testing purposes,
+        // we're adding all available items here
+        items.addAll(Item.itemsMap.values());
 
+        // Render initial icons for the items in the items section
+        renderItemSection(itemsSection, items);
+
+        // Additional itemsSection settings
         itemsSection.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         itemsSection.setBounds(20, 17, 361, 64);
         itemsSection.setBackground(ITEM_ICON_BACKGROUND.color());
         this.add(itemsSection, LAYER_1);
 
         /* Character Section Icons */
-        JPanel characterSection = new JPanel();
+        characterSection = new JPanel();
 
         // Add item icons to the frame
         String[] characters = {"nanny.png", "butler.png", "gardner.png", "man.png", "girl.png"};
         for (String character : characters) {
-            ImageIcon icon =
-                    ImageUtils.getResizedIcon("data/icons/" + character.toLowerCase(), 50, 50);
+            ImageIcon icon = ImageUtils.getResizedIcon("data/icons/" + character.toLowerCase(), 50, 50);
             JLabel itemIcon = new JLabel(icon);
             characterSection.add(itemIcon);
         }
@@ -63,19 +77,74 @@ public class LocationSection extends JLayeredPane {
         ImageIcon journalIcon = ImageUtils.getResizedIcon("data/icons/journal.png", 140, 140);
         JLabel journalIconLabel = new JLabel(journalIcon);
         journalIconLabel.setBounds(381, 20, 140, 140);
+        journalIconLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                showJournalEntries();
+            }
+        });
         this.add(journalIconLabel, LAYER_1);
 
         /* Location Section JLayeredPane Bounds */
         this.setBounds(30, 240, 540, 333);
     }
 
-    private static JScrollPane getDescriptionScrollPane() {
-        JTextArea description = getDescriptionTextArea();
+    private void showJournalEntries() {
+        int idx = 1;
+        descriptionTextArea.setText("");
+        for (Item evidence : playerSection.getEvidenceBag()) {
+            descriptionTextArea.append(idx++ + ". " + evidence.getName() + " - " + evidence.getDescription() + "\n");
+        }
+    }
+
+    private void renderItemSection(JPanel itemsSection, List<Item> items) {
+        clearPanel(itemsSection);
+        for (Item item : items) {
+            ImageIcon icon = ImageUtils.getResizedIcon("data/icons/" + item.getFilename().toLowerCase(), 50, 50);
+            JLabel label = new JLabel(icon);
+            // Mouse click listener
+            // Single Click: show description
+            // Double Click: add item to evidence bag and remove from location
+            label.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        playerSection.addItemToEvidenceBag(item);
+                        removeItemsFromLocation(item);
+                        descriptionTextArea.setText(item.getName() + " added to evidence bag");
+                    } else {
+                        String itemDescription = item.getDescription();
+                        descriptionTextArea.setText(itemDescription);
+                    }
+                }
+            });
+            itemsSection.add(label);
+        }
+    }
+
+    public void removeItemsFromLocation(Item item) {
+        items.remove(item);
+        renderItemSection(itemsSection, items);
+    }
+
+    public void addItemToLocation(Item item) {
+        items.add(item);
+        renderItemSection(itemsSection, items);
+    }
+
+    public void clearPanel(JPanel panel) {
+        panel.removeAll();
+        panel.revalidate();
+        panel.repaint();
+    }
+
+    private JScrollPane getDescriptionScrollPane() {
+        descriptionTextArea = createDescriptionTextArea();
 
         // Create Scroll Pane and add description text area to scroll pane
         JScrollPane scrollableDescriptionPane = new JScrollPane();
         scrollableDescriptionPane.setBackground(ITEM_DESCRIPTION_BACKGROUND.color());
-        scrollableDescriptionPane.setViewportView(description);
+        scrollableDescriptionPane.setViewportView(descriptionTextArea);
 
         // Scroll pane specific setting
         scrollableDescriptionPane.setBounds(20, 174, 502, 142);
@@ -83,23 +152,8 @@ public class LocationSection extends JLayeredPane {
         return scrollableDescriptionPane;
     }
 
-    private static JTextArea getDescriptionTextArea() {
+    private JTextArea createDescriptionTextArea() {
         JTextArea description = new JTextArea();
-        description.setText(
-                """
-                This is a multi-line scrollable label.
-                Add as many lines as you needed.
-                The text will be wrapped automatically.
-                This is a multi-line scrollable label.
-                Add as many lines as you needed.
-                The text will be wrapped automatically.
-                This is a multi-line scrollable label.
-                Add as many lines as you needed.
-                The text will be wrapped automatically.
-                This is a multi-line scrollable label.
-                Add as many lines as you needed.
-                The text will be wrapped automatically.
-                """);
         description.setLineWrap(true);
         description.setWrapStyleWord(true);
         description.setEditable(false);
@@ -111,4 +165,14 @@ public class LocationSection extends JLayeredPane {
         description.setBounds(5, 5, 502, 142);
         return description;
     }
+
+    public JTextArea getDescriptionTextArea() {
+        return descriptionTextArea;
+    }
+
+    public void setDescriptionTextArea(JTextArea descriptionTextArea) {
+        this.descriptionTextArea = descriptionTextArea;
+    }
 }
+
+

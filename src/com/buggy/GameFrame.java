@@ -15,7 +15,8 @@ public class GameFrame extends JFrame {
         this.add(playerSection);
 
         /* Location Section */
-        LocationSection locationSection = new LocationSection();
+        LocationSection locationSection = new LocationSection(playerSection);
+        playerSection.setLocationSection(locationSection);
         this.add(locationSection);
 
         /* Location Description Section */
